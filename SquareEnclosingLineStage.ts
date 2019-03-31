@@ -31,3 +31,53 @@ class ScaleUtil {
         return ScaleUtil.mirrorValue(scale, a, b) * dir * scGap
     }
 }
+
+class DrawingUtil {
+
+      static drawRotatingLine(context : CanvasRenderingContext2D, i : number, size : number, deg : number) {
+          const sf : number = 1 - 2 * i
+          context.save()
+          context.translate(size * sf, size)
+          context.rotate(-(sf * deg) * Math.PI / 180)
+          context.beginPath()
+          context.moveTo(0, 0)
+          context.lineTo(2 * size * sf, 0)
+          context.stroke()
+          context.restore()
+      }
+
+      static drawMovingLine(context : CanvasRenderingContext2D, size : number, scale : number) {
+          context.save()
+          context.translate(-(w/2 + size) * (1 - scale), -size)
+          context.beginPath()
+          context.moveTo(-size, 0)
+          context.lineTo(size, 0)
+          context.stroke()
+          context.restore()
+      }
+
+      static drawStaticLine(context : CanvasRenderingContext2D, size : number) {
+          context.beginPath()
+          context.moveTo(-size, size)
+          context.lineTo(size, size)
+          context.stroke()
+      }
+
+      static drawSELNode(context : CanvasRenderingContext2D, i : number, scale : number) {
+          const gap : number = h / (nodes + 1)
+          const size : number = gap / sizeFactor
+          const sc1 : number = ScaleUtil.divideScale(scale, 0, 2)
+          const sc2 : number = ScaleUtil.divideScale(scale, 1, 2)
+          context.strokeStyle = foreColor
+          context.lineWidth = Math.min(w, h) / strokeFactor
+          context.lineCap = 'round'
+          context.save()
+          context.translate(w / 2, gap * (i + 1))
+          DrawingUtil.drawMovingLine(context, size, sc1)
+          DrawingUtil.drawStaticLine(context, size)
+          for (var j = 0; j < lines; j++) {
+              DrawingUtil.drawRotatingLine(context, j, size, 90 * ScaleUtil.divideScale(sc2, j, lines))
+          }
+          context.restore()
+      }
+}
