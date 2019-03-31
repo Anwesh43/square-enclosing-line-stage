@@ -19,7 +19,7 @@ class ScaleUtil {
     }
 
     static divideScale(scale : number, i : number, n : number) : number {
-        return Math.min(1 / n, ScaleUtil.maxScale(scale, i, n))
+        return Math.min(1 / n, ScaleUtil.maxScale(scale, i, n)) * n
     }
 
     static mirrorValue(scale : number, a : number, b : number) : number {
@@ -46,9 +46,10 @@ class DrawingUtil {
           context.restore()
       }
 
-      static drawMovingLine(context : CanvasRenderingContext2D, size : number, scale : number) {
+      static drawMovingLine(context : CanvasRenderingContext2D, i : number, size : number, scale : number) {
+          const sf : number = 1 - 2 * (i % 2)
           context.save()
-          context.translate(-(w/2 + size) * (1 - scale), -size)
+          context.translate(-(w/2 + size + context.lineWidth / 2) * (1 - scale) * sf, -size)
           context.beginPath()
           context.moveTo(-size, 0)
           context.lineTo(size, 0)
@@ -73,7 +74,7 @@ class DrawingUtil {
           context.lineCap = 'round'
           context.save()
           context.translate(w / 2, gap * (i + 1))
-          DrawingUtil.drawMovingLine(context, size, sc1)
+          DrawingUtil.drawMovingLine(context, i, size, sc1)
           DrawingUtil.drawStaticLine(context, size)
           for (var j = 0; j < lines; j++) {
               DrawingUtil.drawRotatingLine(context, j, size, 90 * ScaleUtil.divideScale(sc2, j, lines))
