@@ -220,7 +220,29 @@ class SquareEnclosingLine {
         })
     }
 
-    startUdating(cb : Function) {
+    startUpdating(cb : Function) {
         this.curr.startUpdating(cb)
+    }
+}
+
+class Renderer {
+
+    sel : SquareEnclosingLine = new SquareEnclosingLine()
+    animator : Animator = new Animator()
+
+    render(context : CanvasRenderingContext2D) {
+        this.sel.draw(context)
+    }
+
+    handleTap(cb : Function) {
+        this.sel.startUpdating(() => {
+            this.animator.start(() => {
+                cb()
+                this.sel.update(() => {
+                    this.animator.stop()
+                    cb()
+                })
+            })
+        })
     }
 }
